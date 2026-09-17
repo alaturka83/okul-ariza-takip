@@ -590,58 +590,58 @@
                     ) : (
                         <main className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
                             <div className={`${isMobileFormOpen ? 'fixed inset-0 z-[110] bg-slate-900/60 backdrop-blur-sm flex items-end justify-center' : 'hidden lg:block lg:static'}`}>
-                                <div className={`bg-white w-full rounded-t-3xl p-6 shadow-2xl ${isMobileFormOpen ? 'max-h-[90vh] overflow-y-auto safe-bottom' : 'lg:rounded-2xl lg:border lg:shadow-sm lg:sticky lg:top-8'}`}>
-                                    <div className="flex justify-between items-center mb-6 border-b pb-3">
-                                        <h2 className="text-lg font-bold flex items-center gap-2 text-blue-700"><Icon name="pen" size={20} /> Yönetici Formu</h2>
+                                <div className={`bg-white w-full rounded-t-3xl p-3 sm:p-6 shadow-2xl ${isMobileFormOpen ? 'max-h-[100dvh] overflow-y-auto safe-bottom' : 'lg:rounded-2xl lg:border lg:shadow-sm lg:sticky lg:top-8'}`}>
+                                    <div className="flex justify-between items-center mb-2 sm:mb-6 border-b pb-2 sm:pb-3">
+                                        <h2 className="text-base sm:text-lg font-bold flex items-center gap-2 text-blue-700"><Icon name="pen" size={18} /> Yönetici Formu</h2>
                                         {isMobileFormOpen && <button onClick={() => setIsMobileFormOpen(false)} className="bg-slate-100 p-2 rounded-full text-slate-500 hover:bg-slate-200"><Icon name="x" size={20} /></button>}
                                     </div>
-                                    <form onSubmit={handleAdminSubmit} className="space-y-4">
+                                    <form onSubmit={handleAdminSubmit} className="space-y-1.5 sm:space-y-4">
                                         <div>
-                                            <label className="text-xs font-bold block mb-1 text-slate-500">Kayıt Tarihi</label>
-                                            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full p-2.5 bg-slate-50 border rounded-lg text-sm outline-none focus:ring-2 ring-blue-100" required />
+                                            <label className="text-xs font-bold block mb-0.5 sm:mb-1 text-slate-500">Kayıt Tarihi</label>
+                                            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full p-1.5 sm:p-2.5 bg-slate-50 border rounded-lg text-sm outline-none focus:ring-2 ring-blue-100" required />
                                         </div>
                                         <div className="grid grid-cols-2 gap-2">
                                             <div>
-                                                <label className="text-xs font-bold block mb-1 text-slate-500">Sınıf Grubu</label>
-                                                <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full p-2.5 bg-slate-50 border rounded-lg text-sm font-medium">
+                                                <label className="text-xs font-bold block mb-0.5 sm:mb-1 text-slate-500">Sınıf Grubu</label>
+                                                <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full p-1.5 sm:p-2.5 bg-slate-50 border rounded-lg text-sm font-medium">
                                                     {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                                                 </select>
                                             </div>
                                             <div>
-                                                <label className="text-xs font-bold block mb-1 text-slate-500">Şube</label>
-                                                {isOtherCategory ? <input type="text" value={customBranch} onChange={(e) => setCustomBranch(e.target.value)} required placeholder="Örn: Lab..." className="w-full p-2.5 bg-slate-50 border rounded-lg text-sm font-medium" /> :
-                                                <select value={branch} onChange={(e) => setBranch(e.target.value)} className="w-full p-2.5 bg-slate-50 border rounded-lg text-sm font-medium">
+                                                <label className="text-xs font-bold block mb-0.5 sm:mb-1 text-slate-500">Şube</label>
+                                                {isOtherCategory ? <input type="text" value={customBranch} onChange={(e) => setCustomBranch(e.target.value)} required placeholder="Örn: Lab..." className="w-full p-1.5 sm:p-2.5 bg-slate-50 border rounded-lg text-sm font-medium" /> :
+                                                <select value={branch} onChange={(e) => setBranch(e.target.value)} className="w-full p-1.5 sm:p-2.5 bg-slate-50 border rounded-lg text-sm font-medium">
                                                     {BRANCHES.map(b => <option key={b} value={b}>{b} Şubesi</option>)}
                                                 </select>}
                                             </div>
                                         </div>
                                         <div>
-                                            <label className="text-xs font-bold block mb-1 text-slate-500">Yapılan İşlem</label>
-                                            <select value={actionType} onChange={(e) => setActionType(e.target.value)} className="w-full p-2.5 bg-slate-50 border rounded-lg text-sm font-medium">
+                                            <label className="text-xs font-bold block mb-0.5 sm:mb-1 text-slate-500">Yapılan İşlem</label>
+                                            <select value={actionType} onChange={(e) => setActionType(e.target.value)} className="w-full p-1.5 sm:p-2.5 bg-slate-50 border rounded-lg text-sm font-medium">
                                                 {ACTION_TYPES.map(i => <option key={i} value={i}>{i}</option>)}
                                             </select>
                                         </div>
                                         <div>
-                                            <label className="text-xs font-bold block mb-2 text-slate-500">İşlem Durumu</label>
+                                            <label className="text-xs font-bold block mb-0.5 sm:mb-2 text-slate-500">İşlem Durumu</label>
                                             <div className="grid grid-cols-2 gap-2">
-                                                <label className={`flex items-center justify-center gap-2 p-2.5 border rounded-lg cursor-pointer transition-all ${status === 'Çözüldü' ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'bg-white text-slate-400 border-slate-200'}`}>
+                                                <label className={`flex items-center justify-center gap-2 p-1.5 sm:p-2.5 border rounded-lg cursor-pointer transition-all ${status === 'Çözüldü' ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'bg-white text-slate-400 border-slate-200'}`}>
                                                     <input type="radio" className="hidden" onChange={() => setStatus('Çözüldü')} checked={status === 'Çözüldü'} /><Icon name="check" size={16} /> <span className="text-xs font-bold">Çözüldü</span>
                                                 </label>
-                                                <label className={`flex items-center justify-center gap-2 p-2.5 border rounded-lg cursor-pointer transition-all ${status === 'Parça Bekliyor' ? 'bg-amber-50 border-amber-500 text-amber-700' : 'bg-white text-slate-400 border-slate-200'}`}>
+                                                <label className={`flex items-center justify-center gap-2 p-1.5 sm:p-2.5 border rounded-lg cursor-pointer transition-all ${status === 'Parça Bekliyor' ? 'bg-amber-50 border-amber-500 text-amber-700' : 'bg-white text-slate-400 border-slate-200'}`}>
                                                     <input type="radio" className="hidden" onChange={() => setStatus('Parça Bekliyor')} checked={status === 'Parça Bekliyor'} /><Icon name="clock" size={16} /> <span className="text-xs font-bold">Bekliyor</span>
                                                 </label>
                                             </div>
                                         </div>
                                         <div>
-                                            <label className="text-xs font-bold block mb-2 text-slate-500">Fotoğraf Ekle (Çoklu)</label>
-                                            <div className="grid grid-cols-2 gap-2 mb-3">
-                                                <label className="flex flex-col items-center justify-center p-3 border-2 border-dashed border-slate-200 rounded-lg cursor-pointer bg-slate-50 hover:bg-slate-100">
-                                                    <Icon name="camera" size={20} className="text-blue-400 mb-1" />
+                                            <label className="text-xs font-bold block mb-0.5 sm:mb-2 text-slate-500">Fotoğraf Ekle (Çoklu)</label>
+                                            <div className="grid grid-cols-2 gap-2 mb-1.5 sm:mb-3">
+                                                <label className="flex flex-col items-center justify-center p-1.5 sm:p-3 border-2 border-dashed border-slate-200 rounded-lg cursor-pointer bg-slate-50 hover:bg-slate-100">
+                                                    <Icon name="camera" size={16} className="text-blue-400 mb-0.5 sm:mb-1" />
                                                     <span className="text-[9px] font-bold text-slate-500 uppercase">Kamera</span>
                                                     <input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => handleImageUpload(e, setAImages)} />
                                                 </label>
-                                                <label className="flex flex-col items-center justify-center p-3 border-2 border-dashed border-slate-200 rounded-lg cursor-pointer bg-slate-50 hover:bg-slate-100">
-                                                    <Icon name="image" size={20} className="text-emerald-400 mb-1" />
+                                                <label className="flex flex-col items-center justify-center p-1.5 sm:p-3 border-2 border-dashed border-slate-200 rounded-lg cursor-pointer bg-slate-50 hover:bg-slate-100">
+                                                    <Icon name="image" size={16} className="text-emerald-400 mb-0.5 sm:mb-1" />
                                                     <span className="text-[9px] font-bold text-slate-500 uppercase">Dosya</span>
                                                     <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => handleImageUpload(e, setAImages)} />
                                                 </label>
@@ -657,8 +657,8 @@
                                                 </div>
                                             )}
                                         </div>
-                                        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} className="w-full p-2.5 bg-slate-50 border rounded-lg text-sm h-24 resize-none outline-none focus:ring-2 ring-blue-100" placeholder="Detaylar..." required />
-                                        <button type="submit" className="w-full bg-slate-800 text-white p-3 rounded-xl font-bold hover:bg-slate-900 transition-colors shadow-md active:scale-95 mt-2">Kaydı Sisteme Ekle</button>
+                                        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} className="w-full p-1.5 sm:p-2.5 bg-slate-50 border rounded-lg text-sm h-14 sm:h-24 resize-none outline-none focus:ring-2 ring-blue-100" placeholder="Detaylar..." required />
+                                        <button type="submit" className="w-full bg-slate-800 text-white p-2 sm:p-3 rounded-xl font-bold hover:bg-slate-900 transition-colors shadow-md active:scale-95 mt-1 sm:mt-2">Kaydı Sisteme Ekle</button>
                                     </form>
                                 </div>
                             </div>
