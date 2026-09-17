@@ -6,7 +6,11 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Arıza Takip">
     <meta name="theme-color" content="#2563eb">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
     <title>Okul Arıza & Bakım Takip</title>
 
     <!-- Tailwind CSS -->
@@ -453,7 +457,7 @@
 
             if (authError) {
                 return (
-                    <div className="min-h-screen bg-slate-100 flex items-center justify-center font-sans p-6">
+                    <div className="min-h-[100dvh] bg-slate-100 flex items-center justify-center font-sans p-6">
                         <div className="bg-white border border-red-200 rounded-2xl p-6 max-w-md text-center shadow-lg">
                             <p className="text-red-600 font-bold mb-2">Bağlantı Hatası</p>
                             <p className="text-sm text-slate-600">{authError}</p>
@@ -462,10 +466,10 @@
                 );
             }
 
-            if (isLoading || !user) return <div className="min-h-screen bg-slate-100 flex items-center justify-center font-sans"><Icon name="loader" className="text-blue-600 mr-2" /> Bağlanılıyor...</div>;
+            if (isLoading || !user) return <div className="min-h-[100dvh] bg-slate-100 flex items-center justify-center font-sans"><Icon name="loader" className="text-blue-600 mr-2" /> Bağlanılıyor...</div>;
 
             return (
-                <div className="min-h-screen bg-slate-100 p-3 sm:p-4 md:p-8 font-sans text-slate-800" onClick={unlockAudio}>
+                <div className="min-h-[100dvh] bg-slate-100 p-2 sm:p-4 md:p-8 font-sans text-slate-800" onClick={unlockAudio}>
 
                     {viewingImage && (
                         <div className="fixed inset-0 bg-slate-900/90 backdrop-blur-sm flex items-center justify-center z-[200] p-4" onClick={() => setViewingImage(null)}>
@@ -488,11 +492,11 @@
                         </div>
                     )}
 
-                    <header className="max-w-6xl mx-auto mb-6 flex items-center justify-between">
+                    <header className="max-w-6xl mx-auto mb-2 sm:mb-6 flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <div className="bg-blue-600 p-3 rounded-xl text-white shadow-lg shrink-0"><Icon name="school" size={28} /></div>
+                            <div className="bg-blue-600 p-2 sm:p-3 rounded-xl text-white shadow-lg shrink-0"><Icon name="school" size={22} className="sm:hidden" /><Icon name="school" size={28} className="hidden sm:block" /></div>
                             <div>
-                                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-2">
+                                <h1 className="text-lg sm:text-2xl font-bold text-slate-900 flex items-center gap-2">
                                     Arıza & Bakım Takip
                                     {recordCounts.newReq > 0 && <span className="flex h-3 w-3 rounded-full bg-red-500 animate-ping"></span>}
                                 </h1>
@@ -521,49 +525,49 @@
                                     <p className="text-emerald-600">Yönetici bilgilendirildi.</p>
                                 </div>
                             ) : (
-                                <div className="bg-white rounded-3xl shadow-xl border border-slate-200 p-6 sm:p-8">
-                                    <h2 className="text-2xl font-bold text-slate-800 mb-6 text-center">Arıza Bildirim Formu</h2>
-                                    <form onSubmit={handleTeacherSubmit} className="space-y-5">
+                                <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-slate-200 p-3 sm:p-8">
+                                    <h2 className="text-lg sm:text-2xl font-bold text-slate-800 mb-2 sm:mb-6 text-center">Arıza Bildirim Formu</h2>
+                                    <form onSubmit={handleTeacherSubmit} className="space-y-2 sm:space-y-5">
                                         <div className="grid grid-cols-2 gap-4">
                                             <div>
-                                                <label className="text-sm font-bold block mb-1 text-slate-600">Sınıf / Grup</label>
-                                                <select value={tCategory} onChange={(e) => setTCategory(e.target.value)} className="w-full p-3 bg-slate-50 border rounded-xl outline-none text-sm font-medium text-slate-700">
+                                                <label className="text-xs sm:text-sm font-bold block mb-0.5 sm:mb-1 text-slate-600">Sınıf / Grup</label>
+                                                <select value={tCategory} onChange={(e) => setTCategory(e.target.value)} className="w-full p-2 sm:p-3 bg-slate-50 border rounded-xl outline-none text-sm font-medium text-slate-700">
                                                     {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                                                 </select>
                                             </div>
                                             <div>
-                                                <label className="text-sm font-bold block mb-1 text-slate-600">Şube / Mekan</label>
-                                                {isTOtherCategory ? <input type="text" value={tCustomBranch} onChange={(e) => setTCustomBranch(e.target.value)} required className="w-full p-3 bg-slate-50 border rounded-xl text-sm" /> :
-                                                <select value={tBranch} onChange={(e) => setTBranch(e.target.value)} className="w-full p-3 bg-slate-50 border rounded-xl text-sm font-medium text-slate-700">
+                                                <label className="text-xs sm:text-sm font-bold block mb-0.5 sm:mb-1 text-slate-600">Şube / Mekan</label>
+                                                {isTOtherCategory ? <input type="text" value={tCustomBranch} onChange={(e) => setTCustomBranch(e.target.value)} required className="w-full p-2 sm:p-3 bg-slate-50 border rounded-xl text-sm" /> :
+                                                <select value={tBranch} onChange={(e) => setTBranch(e.target.value)} className="w-full p-2 sm:p-3 bg-slate-50 border rounded-xl text-sm font-medium text-slate-700">
                                                     {BRANCHES.map(b => <option key={b} value={b}>{b} Şubesi</option>)}
                                                 </select>}
                                             </div>
                                         </div>
                                         <div>
-                                            <label className="text-sm font-bold block mb-1 text-slate-600">Karşılaşılan Sorun</label>
+                                            <label className="text-xs sm:text-sm font-bold block mb-0.5 sm:mb-1 text-slate-600">Karşılaşılan Sorun</label>
                                             <select value={tIssue} onChange={(e) => setTIssue(e.target.value)} className="w-full p-3 bg-slate-50 border rounded-xl text-sm font-medium text-slate-700">
                                                 {TEACHER_ISSUES.map(i => <option key={i} value={i}>{i}</option>)}
                                             </select>
                                         </div>
                                         <div>
-                                            <label className="text-sm font-bold block mb-1 text-slate-600">Adınız Soyadınız</label>
-                                            <input type="text" value={tName} onChange={(e) => setTName(e.target.value)} required placeholder="Lütfen isminizi girin" className="w-full p-3 bg-slate-50 border rounded-xl text-sm outline-none focus:ring-2 ring-blue-100" />
+                                            <label className="text-xs sm:text-sm font-bold block mb-0.5 sm:mb-1 text-slate-600">Adınız Soyadınız</label>
+                                            <input type="text" value={tName} onChange={(e) => setTName(e.target.value)} required placeholder="Lütfen isminizi girin" className="w-full p-2 sm:p-3 bg-slate-50 border rounded-xl text-sm outline-none focus:ring-2 ring-blue-100" />
                                         </div>
                                         <div>
-                                            <label className="text-sm font-bold block mb-1 text-slate-600">Açıklama</label>
-                                            <textarea rows="3" value={tNotes} onChange={(e) => setTNotes(e.target.value)} required placeholder="Sorunu buraya yazın..." className="w-full p-3 bg-slate-50 border rounded-xl text-sm resize-none outline-none focus:ring-2 ring-blue-100" />
+                                            <label className="text-xs sm:text-sm font-bold block mb-0.5 sm:mb-1 text-slate-600">Açıklama</label>
+                                            <textarea rows="2" value={tNotes} onChange={(e) => setTNotes(e.target.value)} required placeholder="Sorunu buraya yazın..." className="w-full p-2 sm:p-3 bg-slate-50 border rounded-xl text-sm resize-none outline-none focus:ring-2 ring-blue-100" />
                                         </div>
                                         <div>
-                                            <label className="text-sm font-bold block mb-2 text-slate-600">Fotoğraf Ekle (Birden Fazla Seçilebilir)</label>
-                                            <div className="grid grid-cols-2 gap-3 mb-4">
-                                                <label className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-slate-200 rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100">
-                                                    <Icon name="camera" className="text-blue-500 mb-1" />
-                                                    <span className="text-[10px] font-bold text-slate-600 uppercase">Fotoğraf Çek</span>
+                                            <label className="text-xs sm:text-sm font-bold block mb-1 sm:mb-2 text-slate-600">Fotoğraf Ekle (Birden Fazla Seçilebilir)</label>
+                                            <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-2 sm:mb-4">
+                                                <label className="flex flex-col items-center justify-center p-2 sm:p-4 border-2 border-dashed border-slate-200 rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100">
+                                                    <Icon name="camera" size={18} className="text-blue-500 mb-0.5 sm:mb-1" />
+                                                    <span className="text-[9px] sm:text-[10px] font-bold text-slate-600 uppercase">Fotoğraf Çek</span>
                                                     <input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => handleImageUpload(e, setTImages)} />
                                                 </label>
-                                                <label className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-slate-200 rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100">
-                                                    <Icon name="image" className="text-emerald-500 mb-1" />
-                                                    <span className="text-[10px] font-bold text-slate-600 uppercase">Galeriden Seç</span>
+                                                <label className="flex flex-col items-center justify-center p-2 sm:p-4 border-2 border-dashed border-slate-200 rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100">
+                                                    <Icon name="image" size={18} className="text-emerald-500 mb-0.5 sm:mb-1" />
+                                                    <span className="text-[9px] sm:text-[10px] font-bold text-slate-600 uppercase">Galeriden Seç</span>
                                                     <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => handleImageUpload(e, setTImages)} />
                                                 </label>
                                             </div>
@@ -578,7 +582,7 @@
                                                 </div>
                                             )}
                                         </div>
-                                        <button type="submit" className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-blue-700 transition-all flex items-center justify-center gap-2 active:scale-95"><Icon name="bell" size={20} /> Talebi Gönder</button>
+                                        <button type="submit" className="w-full bg-blue-600 text-white font-bold py-2.5 sm:py-4 rounded-xl shadow-lg hover:bg-blue-700 transition-all flex items-center justify-center gap-2 active:scale-95"><Icon name="bell" size={20} /> Talebi Gönder</button>
                                     </form>
                                 </div>
                             )}
@@ -777,5 +781,171 @@
 
         ReactDOM.createRoot(document.getElementById('root')).render(<App />);
     </script>
+
+<!-- =========================================================================
+     ANA EKRANA / MASAÜSTÜNE EKLE — kurulum şeridi + elle kurulum kılavuzu
+     Rezervasyon sisteminizdeki ile aynı mantık; sw.js bu dosyayla aynı
+     klasörde durmalı.
+     ========================================================================= -->
+<script>
+(function () {
+  var SNOOZE_KEY = 'ariza_kurulum_ertele_v1';
+  var SNOOZE_GUN = 14;
+  var olay = null, serit = null;
+
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('sw.js').catch(function (e) { console.warn('Service worker kaydedilemedi:', e); });
+    });
+  }
+
+  function kuruluMu() {
+    try {
+      return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    } catch (e) { return false; }
+  }
+  function erteliMi() {
+    try {
+      var t = parseInt(localStorage.getItem(SNOOZE_KEY) || '0', 10);
+      return t ? (Date.now() - t) < SNOOZE_GUN * 86400000 : false;
+    } catch (e) { return false; }
+  }
+  function platform() {
+    var ua = navigator.userAgent || '';
+    var iOS = /iPad|iPhone|iPod/.test(ua) || (ua.indexOf('Macintosh') > -1 && navigator.maxTouchPoints > 1);
+    if (iOS) return 'ios';
+    if (/Android/.test(ua)) return 'android';
+    if (/Macintosh/.test(ua)) return 'mac';
+    if (/Firefox/.test(ua)) return 'firefox';
+    return 'windows';
+  }
+  function uygulamaIciTarayiciMi() {
+    var ua = navigator.userAgent || '';
+    return /FBAN|FBAV|FB_IAB|Instagram|Line\/|WhatsApp|Twitter|TikTok|GSA\/.*wv|; wv\)/i.test(ua);
+  }
+
+  function kapatSerit() { if (serit) { serit.remove(); serit = null; } }
+
+  function goster() {
+    if (serit || kuruluMu() || erteliMi()) return;
+    serit = document.createElement('div');
+    serit.setAttribute('role', 'dialog');
+    serit.setAttribute('aria-label', 'Uygulamayı ana ekrana veya masaüstüne ekle');
+    serit.style.cssText =
+      'position:fixed;left:10px;right:10px;z-index:9998;max-width:420px;margin:0 auto;' +
+      'bottom:calc(16px + env(safe-area-inset-bottom,0px));' +
+      'display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:14px;' +
+      'background:#1e3a8a;color:#fff;font-family:system-ui,sans-serif;font-size:13px;font-weight:600;' +
+      'box-shadow:0 8px 26px rgba(15,23,42,.35);';
+    serit.innerHTML =
+      '<img src="icon-192.png" alt="" style="width:34px;height:34px;border-radius:9px;flex:none;">' +
+      '<span style="flex:1;line-height:1.35;">Arıza Takip\'i ana ekranınıza veya masaüstünüze ekleyin — adres çubuğu olmadan, ayrı bir uygulama gibi açılır.</span>' +
+      '<button type="button" data-ek style="flex:none;min-height:40px;padding:0 14px;border:0;border-radius:11px;background:#2563eb;color:#fff;font:inherit;font-weight:800;">Ekle</button>' +
+      '<button type="button" data-kapat aria-label="Şimdi değil" style="flex:none;width:34px;height:40px;border:0;border-radius:11px;background:transparent;color:rgba(255,255,255,.65);font:inherit;font-size:18px;">×</button>';
+
+    serit.querySelector('[data-ek]').onclick = function () {
+      try { localStorage.setItem(SNOOZE_KEY, String(Date.now())); } catch (e) {}
+      kapatSerit();
+      kurulumuBaslat();
+    };
+    serit.querySelector('[data-kapat]').onclick = function () {
+      try { localStorage.setItem(SNOOZE_KEY, String(Date.now())); } catch (e) {}
+      kapatSerit();
+    };
+    document.body.appendChild(serit);
+  }
+
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); olay = e; });
+
+  window.addEventListener('load', function () {
+    setTimeout(function () { if (!kuruluMu() && !erteliMi()) goster(); }, 2500);
+  });
+
+  window.addEventListener('appinstalled', function () {
+    try { localStorage.removeItem(SNOOZE_KEY); } catch (e) {}
+    kapatSerit();
+    kapatModal();
+  });
+
+  var modal = null;
+
+  function modalOlustur() {
+    if (modal) return modal;
+    modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,.6);backdrop-filter:blur(2px);padding:16px;';
+    modal.innerHTML =
+      '<div style="background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.35);width:100%;max-width:420px;max-height:90vh;overflow:auto;font-family:system-ui,sans-serif;">' +
+        '<div style="display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid #e2e8f0;">' +
+          '<img src="icon-192.png" alt="" style="width:38px;height:38px;border-radius:10px;flex:none;">' +
+          '<h3 style="margin:0;font-size:1rem;font-weight:800;color:#0f172a;flex:1;">Ana Ekrana / Masaüstüne Ekle</h3>' +
+          '<button type="button" data-modal-kapat aria-label="Kapat" style="border:0;background:transparent;font-size:20px;line-height:1;color:#64748b;cursor:pointer;">✕</button>' +
+        '</div>' +
+        '<div style="padding:16px 18px;">' +
+          '<ol data-adimlar style="margin:0 0 12px;padding-left:20px;color:#0f172a;font-size:.86rem;line-height:1.7;"></ol>' +
+          '<div data-not style="font-size:.74rem;color:#64748b;line-height:1.55;"></div>' +
+        '</div>' +
+      '</div>';
+    modal.addEventListener('click', function (e) { if (e.target === modal) kapatModal(); });
+    modal.querySelector('[data-modal-kapat]').onclick = kapatModal;
+    document.body.appendChild(modal);
+    return modal;
+  }
+
+  function kapatModal() { if (modal) modal.style.display = 'none'; }
+
+  function adimGoster() {
+    var m = modalOlustur();
+    var p = platform();
+    var adimlar, not_;
+
+    if (uygulamaIciTarayiciMi()) {
+      adimlar =
+        '<li>Bu sayfa şu an Instagram/WhatsApp/Facebook gibi bir uygulamanın <b>kendi mini tarayıcısında</b> açılmış görünüyor — bu tür ekranlarda "Ana ekrana ekle" seçeneği bulunmaz.</li>' +
+        '<li>Sağ üstteki <b>⋮</b> veya <b>paylaş / üç nokta</b> simgesinden <b>"Tarayıcıda Aç"</b> ya da <b>"Open in Chrome/Safari"</b> seçeneğine dokunun.</li>' +
+        '<li>Bağlantı gerçek Chrome (Android) veya Safari (iPhone) uygulamasında açıldıktan sonra bu adımı orada tekrar deneyin.</li>';
+      not_ = 'Sistem tarayıcısı dışında (uygulama içi mini tarayıcılarda) kısayol/PWA kurulumu desteklenmez.';
+    } else if (p === 'ios') {
+      adimlar =
+        '<li>Ekranın altındaki <b>Paylaş</b> düğmesine dokunun (kare içinden çıkan ok).</li>' +
+        '<li>Açılan listeden <b>Ana Ekrana Ekle</b> seçeneğine dokunun.</li>' +
+        '<li>Sağ üstteki <b>Ekle</b> düğmesine basın — simge ana ekranınıza gelir.</li>';
+      not_ = 'Bu adımlar yalnızca Safari\'de çalışır. Başka bir uygulama içinde açtıysanız, önce "Safari\'de Aç" seçeneğini kullanın.';
+    } else if (p === 'android') {
+      adimlar =
+        '<li>Ekranın <b>sağ üst köşesindeki üç nokta (⋮)</b> simgesine dokunun.</li>' +
+        '<li>Açılan menüde <b>"Ana ekrana ekle"</b> veya <b>"Uygulamayı yükle"</b> yazan satırı bulup dokunun.</li>' +
+        '<li><b>Ekle / Yükle</b> deyin — simge ana ekranınıza gelir.</li>';
+      not_ = 'Bu satırı göremiyorsanız bağlantıyı doğrudan Chrome\'da açtığınızdan emin olun ve Chrome\'u güncelleyin.';
+    } else if (p === 'mac') {
+      adimlar =
+        '<li><b>Safari</b>: üst menüden <b>Dosya → Dock\'a Ekle</b>.</li>' +
+        '<li><b>Chrome / Edge</b>: adres çubuğunun sağındaki kurulum simgesine tıklayıp <b>Yükle</b> deyin.</li>';
+      not_ = 'Kurulan uygulama Dock\'tan veya Launchpad\'den doğrudan başlatılabilir.';
+    } else if (p === 'firefox') {
+      adimlar =
+        '<li>Firefox masaüstü sürümü uygulama kurulumunu desteklemez.</li>' +
+        '<li>Aynı bilgisayarda Chrome veya Edge ile açıp adres çubuğunun sağındaki kurulum simgesinden <b>Yükle</b> deyin.</li>';
+      not_ = 'Kurulduktan sonra uygulama ayrı bir pencerede, adres çubuğu olmadan açılır.';
+    } else {
+      adimlar =
+        '<li>Adres çubuğunun sağ tarafındaki kurulum simgesine tıklayın.</li>' +
+        '<li>Görünmüyorsa sağ üstteki <b>⋮</b> menüsünden <b>Uygulamayı yükle</b> seçeneğini seçin.</li>' +
+        '<li><b>Yükle</b> deyin — kısayol masaüstünüze eklenir.</li>';
+      not_ = 'Kurulduktan sonra uygulama masaüstü kısayoluyla, adres çubuğu olmadan doğrudan açılır.';
+    }
+
+    m.querySelector('[data-adimlar]').innerHTML = adimlar;
+    m.querySelector('[data-not]').textContent = kuruluMu() ? 'Bu sayfa şu an zaten kısayoldan/kurulu haliyle açık görünüyor.' : not_;
+    m.style.display = 'flex';
+  }
+
+  function kurulumuBaslat() {
+    if (olay) { olay.prompt(); olay.userChoice.then(function () { olay = null; }); return; }
+    adimGoster();
+  }
+
+  window.ArizaKurulumu = { ac: kurulumuBaslat, kuruluMu: kuruluMu };
+})();
+</script>
 </body>
 </html>
