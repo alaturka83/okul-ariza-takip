@@ -1,0 +1,17 @@
+rules_version = '2';
+
+// Bu kuralları Firebase Console > Firestore Database > Kurallar (Rules)
+// sekmesine yapıştırın.
+//
+// Mantık: Sadece anonim de olsa GİRİŞ YAPMIŞ (auth != null) istemciler
+// okuyup yazabilir. Uygulama zaten her kullanıcıyı otomatik anonim
+// olarak giriş yaptırıyor (signInAnonymously), bu yüzden sistem hem
+// öğretmen hem yönetici tarafı için çalışmaya devam eder. Bu, kuralsız
+// (tamamen açık) bir veritabanından çok daha güvenlidir; ama herkese açık
+// internetten erişilebilir bir uygulama olduğu için ekstra hassas veri
+// eklemeyin.
+match /databases/{database}/documents {
+  match /ariza_kayitlari/{recordId} {
+    allow read, write: if request.auth != null;
+  }
+}
