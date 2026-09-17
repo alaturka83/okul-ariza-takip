@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#2563eb">
     <title>Okul Arıza & Bakım Takip</title>
 
     <!-- Tailwind CSS -->
@@ -19,6 +23,13 @@
 
     <style>
         body { font-family: 'Segoe UI', system-ui, sans-serif; }
+        /* iOS Safari, 16px'den küçük yazı tipli inputlara odaklanınca sayfayı otomatik
+           yakınlaştırır; bunu önlemek için tüm form elemanlarını 16px'te sabitliyoruz. */
+        input, select, textarea { font-size: 16px !important; }
+        /* Çentikli telefonlarda alt bar / FAB butonunun sistem çubuğunun altında
+           kalmaması için güvenli alan boşluğu. */
+        .safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem); }
+        .safe-bottom-fab { bottom: calc(env(safe-area-inset-bottom, 0px) + 1.5rem); }
     </style>
 </head>
 <body class="bg-slate-100">
@@ -118,7 +129,7 @@
             const [showPinModal, setShowPinModal] = useState(false);
             const [pinInput, setPinInput] = useState('');
             const [pinError, setPinError] = useState(false);
-            const ADMIN_PIN = '145353';
+            const ADMIN_PIN = '130513';
 
             const [notificationsEnabled, setNotificationsEnabled] = useState(true);
             const notificationsEnabledRef = useRef(true);
@@ -467,7 +478,7 @@
                         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[150] p-4">
                             <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl">
                                 <h3 className="font-bold text-xl mb-6 flex items-center gap-2 border-b pb-4"><Icon name="lock" className="text-blue-600" /> Yönetici Girişi</h3>
-                                <input type="password" value={pinInput} onChange={(e) => setPinInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handlePinSubmit()} placeholder="****" className="w-full border p-3 rounded-xl mb-4 text-center text-xl tracking-widest focus:ring-2 ring-blue-100 outline-none border-slate-200" autoFocus />
+                                <input type="password" inputMode="numeric" pattern="[0-9]*" autoComplete="off" value={pinInput} onChange={(e) => setPinInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handlePinSubmit()} placeholder="****" className="w-full border p-3 rounded-xl mb-4 text-center text-xl tracking-widest focus:ring-2 ring-blue-100 outline-none border-slate-200" autoFocus />
                                 {pinError && <p className="text-red-500 text-sm mb-4 text-center">Hatalı şifre.</p>}
                                 <div className="flex gap-3">
                                     <button onClick={() => setShowPinModal(false)} className="flex-1 p-2 bg-slate-100 rounded-xl font-medium">İptal</button>
@@ -575,7 +586,7 @@
                     ) : (
                         <main className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
                             <div className={`${isMobileFormOpen ? 'fixed inset-0 z-[110] bg-slate-900/60 backdrop-blur-sm flex items-end justify-center' : 'hidden lg:block lg:static'}`}>
-                                <div className={`bg-white w-full rounded-t-3xl p-6 shadow-2xl ${isMobileFormOpen ? 'max-h-[90vh] overflow-y-auto' : 'lg:rounded-2xl lg:border lg:shadow-sm lg:sticky lg:top-8'}`}>
+                                <div className={`bg-white w-full rounded-t-3xl p-6 shadow-2xl ${isMobileFormOpen ? 'max-h-[90vh] overflow-y-auto safe-bottom' : 'lg:rounded-2xl lg:border lg:shadow-sm lg:sticky lg:top-8'}`}>
                                     <div className="flex justify-between items-center mb-6 border-b pb-3">
                                         <h2 className="text-lg font-bold flex items-center gap-2 text-blue-700"><Icon name="pen" size={20} /> Yönetici Formu</h2>
                                         {isMobileFormOpen && <button onClick={() => setIsMobileFormOpen(false)} className="bg-slate-100 p-2 rounded-full text-slate-500 hover:bg-slate-200"><Icon name="x" size={20} /></button>}
@@ -713,7 +724,7 @@
                                                                 </div>
                                                             )}
                                                         </div>
-                                                        <button onClick={() => handleDelete(r.id)} className="opacity-0 group-hover:opacity-100 p-2 text-slate-300 hover:text-red-500 transition-all self-start" title="Kaydı Sil"><Icon name="trash" size={18} /></button>
+                                                        <button onClick={() => { if (window.confirm('Bu kaydı silmek istediğinizden emin misiniz?')) handleDelete(r.id); }} className="p-2 text-slate-300 hover:text-red-500 active:text-red-600 transition-all self-start shrink-0" title="Kaydı Sil"><Icon name="trash" size={18} /></button>
                                                     </div>
                                                 ))}
                                             </div>
@@ -754,7 +765,7 @@
                                 </div>
                             </div>
                             {!isMobileFormOpen && activeTab === 'list' && (
-                                <button onClick={() => setIsMobileFormOpen(true)} className="lg:hidden fixed bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-2xl z-[120] active:scale-90 transition-transform flex items-center justify-center animate-bounce">
+                                <button onClick={() => setIsMobileFormOpen(true)} className="lg:hidden fixed right-6 safe-bottom-fab bg-blue-600 text-white p-4 rounded-full shadow-2xl z-[120] active:scale-90 transition-transform flex items-center justify-center animate-bounce">
                                     <Icon name="pen" size={26} />
                                 </button>
                             )}
@@ -768,4 +779,3 @@
     </script>
 </body>
 </html>
-
