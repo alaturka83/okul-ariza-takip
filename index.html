@@ -113,6 +113,8 @@
                 case 'list': return <svg {...common}><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>;
                 case 'volume': return <svg {...common}><polygon points="4,9 9,9 13,5 13,19 9,15 4,15"/><path d="M17 8a5 5 0 0 1 0 8"/></svg>;
                 case 'mute': return <svg {...common}><polygon points="4,9 9,9 13,5 13,19 9,15 4,15"/><line x1="17" y1="8" x2="22" y2="13"/><line x1="22" y1="8" x2="17" y2="13"/></svg>;
+                case 'settings': return <svg {...common}><line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2" fill="currentColor"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="16" cy="12" r="2" fill="currentColor"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="11" cy="18" r="2" fill="currentColor"/></svg>;
+                case 'upload': return <svg {...common}><path d="M12 16V4"/><polyline points="7,9 12,4 17,9"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>;
                 default: return null;
             }
         }
@@ -133,7 +135,19 @@
             const [showPinModal, setShowPinModal] = useState(false);
             const [pinInput, setPinInput] = useState('');
             const [pinError, setPinError] = useState(false);
-            const ADMIN_PIN = '130513';
+            const DEFAULT_ADMIN_PIN = '130513';
+
+            // Kurum ayarları (logo, başlık, alt başlık, yönetici şifresi) Firestore'da
+            // saklanır — böylece hangi cihazdan değiştirilirse değiştirilsin tüm
+            // cihazlara anında yansır. Belge henüz oluşmamışsa varsayılanlar kullanılır.
+            const [settings, setSettings] = useState({
+                schoolName: 'Arıza & Bakım Takip',
+                schoolSubtitle: 'Okul teknik destek sistemi',
+                logoDataUrl: '',
+                adminPassword: DEFAULT_ADMIN_PIN
+            });
+            const [showSettingsModal, setShowSettingsModal] = useState(false);
+            const [settingsMsg, setSettingsMsg] = useState('');
 
             const [notificationsEnabled, setNotificationsEnabled] = useState(true);
             const notificationsEnabledRef = useRef(true);
@@ -231,6 +245,21 @@
                 return () => unsubscribe();
             }, [user]);
 
+            // Kurum ayarlarını (logo, başlık, şifre) dinle — belge yoksa varsayılanlarla kalır.
+            useEffect(() => {
+                if (!user) return;
+                const settingsRef = firebase.firestore().collection('ayarlar').doc('genel');
+                const unsubscribe = settingsRef.onSnapshot(
+                    (docSnap) => {
+                        if (docSnap.exists) {
+                            setSettings(prev => ({ ...prev, ...docSnap.data() }));
+                        }
+                    },
+                    (error) => console.error('Ayarlar okunamadı:', error)
+                );
+                return () => unsubscribe();
+            }, [user]);
+
             const toggleNotifications = () => {
                 if (notificationsEnabled) { setNotificationsEnabled(false); }
                 else {
@@ -253,9 +282,43 @@
             };
 
             const handlePinSubmit = () => {
-                if (pinInput === ADMIN_PIN) {
+                if (pinInput === settings.adminPassword) {
                     setAppMode('admin'); setShowPinModal(false); setPinInput(''); setPinError(false); unlockAudio();
                 } else { setPinError(true); }
+            };
+
+            // Ayarları (logo/başlık/alt başlık/şifre) Firestore'a kısmi güncelleme
+            // olarak yazar — belge yoksa merge:true ile oluşturur.
+            const handleSaveSettings = async (partial, mesaj) => {
+                if (!user) return;
+                try {
+                    await firebase.firestore().collection('ayarlar').doc('genel').set(partial, { merge: true });
+                    if (mesaj) { setSettingsMsg(mesaj); setTimeout(() => setSettingsMsg(''), 2500); }
+                } catch (error) { console.error(error); }
+            };
+
+            const handleLogoChange = (e) => {
+                const file = e.target.files && e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        // Logo yalnızca küçük bir simge olarak kullanılacağı için
+                        // Firestore belge boyutunu şişirmemek adına küçültülüyor.
+                        const canvas = document.createElement('canvas');
+                        let w = img.width, h = img.height;
+                        const max = 300;
+                        if (w > h) { if (w > max) { h *= max / w; w = max; } }
+                        else { if (h > max) { w *= max / h; h = max; } }
+                        canvas.width = w; canvas.height = h;
+                        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                        handleSaveSettings({ logoDataUrl: canvas.toDataURL('image/png') }, 'Logo güncellendi');
+                    };
+                };
+                reader.readAsDataURL(file);
+                e.target.value = '';
             };
 
             const handleAdminSubmit = async (e) => {
@@ -493,18 +556,25 @@
                     )}
 
                     <header className="max-w-6xl mx-auto mb-2 sm:mb-6 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-blue-600 p-2 sm:p-3 rounded-xl text-white shadow-lg shrink-0"><Icon name="school" size={22} className="sm:hidden" /><Icon name="school" size={28} className="hidden sm:block" /></div>
-                            <div>
-                                <h1 className="text-lg sm:text-2xl font-bold text-slate-900 flex items-center gap-2">
-                                    Arıza & Bakım Takip
-                                    {recordCounts.newReq > 0 && <span className="flex h-3 w-3 rounded-full bg-red-500 animate-ping"></span>}
+                        <div className="flex items-center gap-3 min-w-0">
+                            <div className="bg-blue-600 rounded-xl text-white shadow-lg shrink-0 w-9 h-9 sm:w-12 sm:h-12 overflow-hidden flex items-center justify-center">
+                                {settings.logoDataUrl ? <img src={settings.logoDataUrl} alt="Kurum logosu" className="w-full h-full object-contain" /> : <><Icon name="school" size={22} className="sm:hidden" /><Icon name="school" size={28} className="hidden sm:block" /></>}
+                            </div>
+                            <div className="min-w-0">
+                                <h1 className="text-lg sm:text-2xl font-bold text-slate-900 flex items-center gap-2 truncate">
+                                    {settings.schoolName}
+                                    {recordCounts.newReq > 0 && <span className="flex h-3 w-3 rounded-full bg-red-500 animate-ping shrink-0"></span>}
                                 </h1>
-                                <p className="text-sm text-slate-500 hidden sm:block">Okul teknik destek sistemi</p>
+                                {settings.schoolSubtitle && <p className="text-sm text-slate-500 hidden sm:block truncate">{settings.schoolSubtitle}</p>}
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 shrink-0">
+                            {appMode === 'admin' && (
+                                <button onClick={() => setShowSettingsModal(true)} className="p-2.5 rounded-xl transition-all border bg-slate-100 border-slate-200 text-slate-500 hover:bg-slate-200" title="Ayarlar">
+                                    <Icon name="settings" size={20} />
+                                </button>
+                            )}
                             {appMode === 'admin' && (
                                 <button onClick={toggleNotifications} className={`p-2.5 rounded-xl transition-all border ${notificationsEnabled ? 'bg-emerald-600 border-emerald-600 text-white shadow-lg shadow-emerald-200' : 'bg-slate-100 border-slate-200 text-slate-400 hover:bg-slate-200'}`} title={notificationsEnabled ? 'Bildirimleri Kapat' : 'Bildirimleri Aç'}>
                                     <Icon name={notificationsEnabled ? 'volume' : 'mute'} size={20} />
@@ -515,6 +585,57 @@
                             </button>
                         </div>
                     </header>
+
+                    {showSettingsModal && appMode === 'admin' && (
+                        <div onClick={(e) => { if (e.target === e.currentTarget) setShowSettingsModal(false); }} className="fixed inset-0 z-[300] bg-slate-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+                            <div className="w-full sm:max-w-lg bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl max-h-[92vh] overflow-y-auto safe-bottom">
+                                <div className="flex items-center justify-between px-5 py-4 border-b sticky top-0 bg-white">
+                                    <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2"><Icon name="settings" size={20} className="text-blue-600" /> Ayarlar</h3>
+                                    <button onClick={() => setShowSettingsModal(false)} className="p-2 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200"><Icon name="x" size={18} /></button>
+                                </div>
+
+                                {settingsMsg && <div className="mx-5 mt-4 px-3 py-2 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-100">{settingsMsg}</div>}
+
+                                <div className="p-5 space-y-6">
+                                    <form onSubmit={(e) => { e.preventDefault(); const f = new FormData(e.target); handleSaveSettings({ schoolName: f.get('schoolName') || 'Arıza & Bakım Takip', schoolSubtitle: f.get('schoolSubtitle') || '' }, 'Kurum bilgileri güncellendi'); }} className="space-y-3">
+                                        <p className="text-xs font-extrabold text-slate-500 uppercase tracking-wider">Kurum Bilgileri</p>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-14 h-14 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden shrink-0">
+                                                {settings.logoDataUrl ? <img src={settings.logoDataUrl} alt="Kurum logosu" className="w-full h-full object-contain" /> : <Icon name="school" size={24} className="text-slate-300" />}
+                                            </div>
+                                            <div className="flex flex-col gap-1">
+                                                <label className="px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer bg-slate-100 text-slate-700 hover:bg-slate-200 w-fit flex items-center gap-1">
+                                                    <Icon name="upload" size={13} /> Logo Yükle
+                                                    <input type="file" accept="image/*" onChange={handleLogoChange} className="hidden" />
+                                                </label>
+                                                {settings.logoDataUrl && (
+                                                    <button type="button" onClick={() => handleSaveSettings({ logoDataUrl: '' }, 'Logo kaldırıldı')} className="text-[11px] font-bold text-red-500 text-left">Logoyu kaldır</button>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="text-xs font-bold block mb-1 text-slate-500">Başlık</label>
+                                            <input name="schoolName" defaultValue={settings.schoolName} placeholder="Arıza & Bakım Takip" className="w-full p-2.5 bg-slate-50 border rounded-xl text-sm font-semibold outline-none focus:ring-2 ring-blue-100" />
+                                        </div>
+                                        <div>
+                                            <label className="text-xs font-bold block mb-1 text-slate-500">Alt Başlık</label>
+                                            <input name="schoolSubtitle" defaultValue={settings.schoolSubtitle} placeholder="Örn: Cevdet Güçlüer İlkokulu" className="w-full p-2.5 bg-slate-50 border rounded-xl text-sm outline-none focus:ring-2 ring-blue-100" />
+                                        </div>
+                                        <button type="submit" className="px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-700">Kaydet</button>
+                                    </form>
+
+                                    <form onSubmit={(e) => { e.preventDefault(); const f = new FormData(e.target); const yeni = f.get('adminPassword'); if (yeni) { handleSaveSettings({ adminPassword: yeni }, 'Şifre güncellendi'); e.target.reset(); } }} className="space-y-3 pt-4 border-t border-slate-100">
+                                        <p className="text-xs font-extrabold text-slate-500 uppercase tracking-wider">Yönetici Şifresi</p>
+                                        <div>
+                                            <label className="text-xs font-bold block mb-1 text-slate-500">Yeni Şifre</label>
+                                            <input name="adminPassword" type="text" inputMode="numeric" placeholder="Yeni şifreyi girin" className="w-full p-2.5 bg-slate-50 border rounded-xl text-sm font-mono outline-none focus:ring-2 ring-blue-100" />
+                                        </div>
+                                        <button type="submit" className="px-4 py-2 rounded-xl bg-slate-800 text-white text-sm font-bold hover:bg-slate-900">Şifreyi Güncelle</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     {appMode === 'teacher' ? (
                         <main className="max-w-xl mx-auto">
