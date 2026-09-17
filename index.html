@@ -69,16 +69,16 @@
                     `Bildiren: ${record.reporterName}\n` +
                     `Fotoğraf: ${photoCount} adet\n` +
                     `Not: ${record.notes || '-'}`;
-                fetch('https://ntfy.sh', {
+                // NOT: rezervasyon sisteminde anlık düşen, çalıştığı kanıtlanmış birebir
+                // aynı yöntem — konu adı URL'de, başlık/öncelik HTTP başlığında (JSON
+                // gövde değil). Başlıkta Türkçe karakter (ı, ş, ğ) KULLANMIYORUZ çünkü
+                // tarayıcının fetch() API'si HTTP başlık değerlerinde yalnızca Latin-1
+                // karakterlere izin verir; Türkçe karakter koyarsak istek tarayıcı
+                // tarafından sessizce reddedilir/gecikir.
+                fetch('https://ntfy.sh/' + NTFY_TOPIC, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        topic: NTFY_TOPIC,
-                        title: 'Yeni Arıza Talebi',
-                        message,
-                        priority: 3,
-                        tags: ['rotating_light', 'school']
-                    })
+                    body: message,
+                    headers: { 'Title': 'Yeni Ariza Talebi', 'Priority': 'default', 'Tags': 'rotating_light' }
                 }).catch(() => {});
             } catch (e) {}
         }
