@@ -568,8 +568,8 @@
                         </div>
                     )}
 
-                    <header className="max-w-6xl mx-auto mb-2 sm:mb-6 flex flex-wrap sm:flex-nowrap items-center justify-between gap-y-2 bg-white rounded-2xl shadow-sm border border-slate-200 px-3 py-3 sm:px-4 sm:py-4">
-                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <header className="max-w-6xl mx-auto mb-2 sm:mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 bg-white rounded-2xl shadow-sm border border-slate-200 px-3 py-3 sm:px-4 sm:py-4">
+                        <div className="flex items-center gap-3 min-w-0">
                             {settings.logoDataUrl ? (
                                 <img src={settings.logoDataUrl} alt="Kurum logosu" className="w-11 h-11 sm:h-14 sm:w-auto max-w-[3.5rem] object-contain shrink-0" />
                             ) : (
@@ -586,7 +586,7 @@
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto justify-end">
+                        <div className="flex items-center gap-2 shrink-0 justify-end">
                             {appMode === 'admin' && (
                                 <button onClick={() => setShowSettingsModal(true)} className="p-2.5 rounded-xl transition-all border bg-slate-100 border-slate-200 text-slate-500 hover:bg-slate-200" title="Ayarlar">
                                     <Icon name="settings" size={20} />

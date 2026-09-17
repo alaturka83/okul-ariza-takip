@@ -4,8 +4,8 @@
    önbelleklenmez; sadece uygulama kabuğu (HTML/manifest/simgeler)
    çevrimdışıyken de açılabilir kalsın diye var.
 ============================================================ */
-const ONBELLEK = 'okul-ariza-takip-kabuk-v1';
-const KABUK = ['./index.html', './manifest.json', './icon-192.png', './icon-512.png', './icon-maskable.png'];
+const ONBELLEK = 'okul-ariza-takip-kabuk-v2';
+const KABUK = ['./index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(ONBELLEK).then(c => c.addAll(KABUK)).then(() => self.skipWaiting()));
