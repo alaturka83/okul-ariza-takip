@@ -131,10 +131,13 @@
             const [records, setRecords] = useState([]);
             const [isLoading, setIsLoading] = useState(true);
 
-            const [appMode, setAppMode] = useState('teacher');
+            const [appMode, setAppMode] = useState(() => {
+                try { return localStorage.getItem('ariza_role') === 'admin' ? 'admin' : 'teacher'; } catch (e) { return 'teacher'; }
+            });
             const [showPinModal, setShowPinModal] = useState(false);
             const [pinInput, setPinInput] = useState('');
             const [pinError, setPinError] = useState(false);
+            const [rememberDevice, setRememberDevice] = useState(true);
             const DEFAULT_ADMIN_PIN = '130513';
 
             // Kurum ayarları (logo, başlık, alt başlık, yönetici şifresi) Firestore'da
@@ -284,6 +287,10 @@
             const handlePinSubmit = () => {
                 if (pinInput === settings.adminPassword) {
                     setAppMode('admin'); setShowPinModal(false); setPinInput(''); setPinError(false); unlockAudio();
+                    try {
+                        if (rememberDevice) localStorage.setItem('ariza_role', 'admin');
+                        else localStorage.removeItem('ariza_role');
+                    } catch (e) {}
                 } else { setPinError(true); }
             };
 
@@ -542,15 +549,21 @@
                     )}
 
                     {showPinModal && (
-                        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[150] p-4">
+                        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-start sm:items-center justify-center z-[150] p-4 pt-10 sm:pt-4 overflow-y-auto">
                             <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl">
                                 <h3 className="font-bold text-xl mb-6 flex items-center gap-2 border-b pb-4"><Icon name="lock" className="text-blue-600" /> Yönetici Girişi</h3>
-                                <input type="password" inputMode="numeric" pattern="[0-9]*" autoComplete="off" value={pinInput} onChange={(e) => setPinInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handlePinSubmit()} placeholder="****" className="w-full border p-3 rounded-xl mb-4 text-center text-xl tracking-widest focus:ring-2 ring-blue-100 outline-none border-slate-200" autoFocus />
-                                {pinError && <p className="text-red-500 text-sm mb-4 text-center">Hatalı şifre.</p>}
-                                <div className="flex gap-3">
-                                    <button onClick={() => setShowPinModal(false)} className="flex-1 p-2 bg-slate-100 rounded-xl font-medium">İptal</button>
-                                    <button onClick={handlePinSubmit} className="flex-1 p-2 bg-blue-600 text-white rounded-xl font-medium">Giriş Yap</button>
-                                </div>
+                                <form onSubmit={(e) => { e.preventDefault(); handlePinSubmit(); }}>
+                                    <input type="password" inputMode="numeric" pattern="[0-9]*" autoComplete="off" value={pinInput} onChange={(e) => setPinInput(e.target.value)} placeholder="****" className="w-full border p-3 rounded-xl mb-4 text-center text-xl tracking-widest focus:ring-2 ring-blue-100 outline-none border-slate-200" autoFocus />
+                                    {pinError && <p className="text-red-500 text-sm mb-4 text-center">Hatalı şifre.</p>}
+                                    <label className="flex items-center gap-2 mb-4 text-xs font-medium text-slate-500 select-none">
+                                        <input type="checkbox" checked={rememberDevice} onChange={(e) => setRememberDevice(e.target.checked)} className="w-4 h-4 accent-blue-600" />
+                                        Bu cihazda beni hatırla
+                                    </label>
+                                    <div className="flex gap-3">
+                                        <button type="button" onClick={() => setShowPinModal(false)} className="flex-1 p-2 bg-slate-100 rounded-xl font-medium">İptal</button>
+                                        <button type="submit" className="flex-1 p-2 bg-blue-600 text-white rounded-xl font-medium">Giriş Yap</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     )}
@@ -580,7 +593,7 @@
                                     <Icon name={notificationsEnabled ? 'volume' : 'mute'} size={20} />
                                 </button>
                             )}
-                            <button onClick={() => appMode === 'teacher' ? setShowPinModal(true) : setAppMode('teacher')} className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm border shadow-sm ${appMode === 'teacher' ? 'bg-white text-slate-600' : 'bg-slate-800 text-white border-slate-700'}`}>
+                            <button onClick={() => { if (appMode === 'teacher') { setShowPinModal(true); } else { setAppMode('teacher'); try { localStorage.removeItem('ariza_role'); } catch (e) {} } }} className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm border shadow-sm ${appMode === 'teacher' ? 'bg-white text-slate-600' : 'bg-slate-800 text-white border-slate-700'}`}>
                                 {appMode === 'teacher' ? <><Icon name="lock" size={16} /> <span className="hidden sm:inline">Yönetici</span></> : <><Icon name="unlock" size={16} /> <span className="hidden sm:inline">Öğretmen</span></>}
                             </button>
                         </div>
