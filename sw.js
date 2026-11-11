@@ -13,7 +13,7 @@
      alınmıyor ve olduğu gibi tarayıcıya bırakılıyor.
    • Kurulumda tek bir simge dosyası inmese bile SW kurulumu çökmüyor.
 ============================================================ */
-const ONBELLEK = 'okul-ariza-takip-kabuk-v4';
+const ONBELLEK = 'okul-ariza-takip-kabuk-v5';
 const INDEX = new URL('./index.html', self.location.href).href;
 const KABUK = [
   INDEX,

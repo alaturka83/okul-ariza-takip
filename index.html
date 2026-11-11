@@ -199,18 +199,58 @@
                 audio.play().then(() => { audioContextUnlocked.current = true; }).catch(() => {});
             };
 
+            const [retryKey, setRetryKey] = useState(0);
+            const [slowConnect, setSlowConnect] = useState(false);
+
             useEffect(() => {
-                if (!(window.firebase && firebase.apps && firebase.apps.length)) {
-                    firebase.initializeApp(FIREBASE_CONFIG);
+                let iptal = false;
+                setAuthError(null);
+                try {
+                    if (!(window.firebase && firebase.apps && firebase.apps.length)) {
+                        firebase.initializeApp(FIREBASE_CONFIG);
+                        // Okul Wi-Fi'si / operatör filtreleri Firestore'un WebSocket/stream
+                        // bağlantısını kesebiliyor; bu durumda otomatik olarak long-polling'e düş.
+                        try { firebase.firestore().settings({ experimentalAutoDetectLongPolling: true, useFetchStreams: false, merge: true }); } catch (e) { console.warn(e); }
+                    }
+                } catch (e) {
+                    console.error(e);
+                    setAuthError('Uygulama başlatılamadı (' + (e && e.code ? e.code : 'init') + '). Sayfayı yenileyin veya Safari/Chrome ile açın.');
+                    return;
                 }
                 const auth = firebase.auth();
-                auth.signInAnonymously().catch((error) => {
-                    console.error(error);
-                    setAuthError('Firebase bağlantısı kurulamadı. Firebase Console > Authentication > Sign-in method içinde "Anonymous" girişinin açık olduğundan emin olun.');
-                });
                 const unsubscribe = auth.onAuthStateChanged(setUser);
-                return () => unsubscribe();
-            }, []);
+
+                // Bazı telefonlarda (WhatsApp/Instagram içi tarayıcı, Safari özel sekme, dolu depolama)
+                // kalıcı oturum yazılamaz. Sırayla LOCAL -> SESSION -> NONE dene.
+                const baglan = async () => {
+                    const P = firebase.auth.Auth.Persistence;
+                    for (const mod of [P.LOCAL, P.SESSION, P.NONE]) {
+                        try { await auth.setPersistence(mod); break; } catch (e) { console.warn('persistence', mod, e && e.code); }
+                    }
+                    let sonHata = null;
+                    for (let i = 0; i < 3 && !iptal; i++) {
+                        try { await auth.signInAnonymously(); return; }
+                        catch (e) { sonHata = e; console.error(e); await new Promise(r => setTimeout(r, 1200 * (i + 1))); }
+                    }
+                    if (!iptal && sonHata) {
+                        const kod = sonHata.code || 'bilinmiyor';
+                        let ek = '';
+                        if (kod === 'auth/admin-restricted-operation' || kod === 'auth/operation-not-allowed') ek = ' Firebase Console > Authentication > Sign-in method içinde "Anonymous" girişi açık olmalı.';
+                        else if (kod === 'auth/network-request-failed') ek = ' İnternet bağlantısı veya okul ağı Firebase\'e erişimi engelliyor olabilir; mobil veriyle deneyin.';
+                        else if (kod === 'auth/web-storage-unsupported' || kod === 'auth/internal-error') ek = ' Tarayıcı depolaması kapalı görünüyor; özel sekme / uygulama içi tarayıcı yerine Safari veya Chrome ile açın.';
+                        setAuthError('Giriş yapılamadı (' + kod + ').' + ek);
+                    }
+                };
+                baglan();
+                return () => { iptal = true; unsubscribe(); };
+            }, [retryKey]);
+
+            // 15 sn içinde bağlanılamazsa sonsuz "Bağlanılıyor..." yerine yardım göster.
+            useEffect(() => {
+                if (!isLoading || authError) { setSlowConnect(false); return; }
+                const t = setTimeout(() => setSlowConnect(true), 15000);
+                return () => clearTimeout(t);
+            }, [isLoading, authError, retryKey]);
 
             useEffect(() => {
                 if (!user) return;
@@ -242,7 +282,7 @@
                     (error) => {
                         console.error(error);
                         setIsLoading(false);
-                        setAuthError('Kayıtlar okunamadı. Firestore güvenlik kurallarınızı kontrol edin.');
+                        setAuthError('Kayıtlar okunamadı (' + (error && error.code ? error.code : 'hata') + '). ' + (error && error.code === 'permission-denied' ? 'Firestore güvenlik kurallarını kontrol edin.' : 'İnternet bağlantınızı kontrol edip tekrar deneyin.'));
                     }
                 );
                 return () => unsubscribe();
@@ -531,12 +571,23 @@
                         <div className="bg-white border border-red-200 rounded-2xl p-6 max-w-md text-center shadow-lg">
                             <p className="text-red-600 font-bold mb-2">Bağlantı Hatası</p>
                             <p className="text-sm text-slate-600">{authError}</p>
+                            <button onClick={() => { setIsLoading(true); setUser(null); setRetryKey(k => k + 1); }} className="mt-4 px-5 py-2 bg-blue-600 text-white rounded-xl font-medium">Tekrar Dene</button>
                         </div>
                     </div>
                 );
             }
 
-            if (isLoading || !user) return <div className="min-h-[100dvh] bg-slate-100 flex items-center justify-center font-sans"><Icon name="loader" className="text-blue-600 mr-2" /> Bağlanılıyor...</div>;
+            if (isLoading || !user) return (
+                <div className="min-h-[100dvh] bg-slate-100 flex flex-col items-center justify-center font-sans p-6 text-center">
+                    <div className="flex items-center"><Icon name="loader" className="text-blue-600 mr-2" /> Bağlanılıyor...</div>
+                    {slowConnect && (
+                        <div className="mt-4 max-w-sm text-sm text-slate-600">
+                            <p>Bağlantı beklenenden uzun sürüyor. Uygulama içi tarayıcıdaysanız (WhatsApp vb.) bağlantıyı Safari/Chrome'da açın; Wi-Fi yerine mobil veriyi de deneyebilirsiniz.</p>
+                            <button onClick={() => { setIsLoading(true); setUser(null); setRetryKey(k => k + 1); }} className="mt-3 px-5 py-2 bg-blue-600 text-white rounded-xl font-medium">Tekrar Dene</button>
+                        </div>
+                    )}
+                </div>
+            );
 
             return (
                 <div className="min-h-[100dvh] bg-slate-100 p-2 sm:p-4 md:p-8 font-sans text-slate-800" onClick={unlockAudio}>
