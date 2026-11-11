@@ -7,12 +7,15 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Arıza Takip">
-    <meta name="theme-color" content="#2563eb">
+    <meta name="theme-color" content="#0f2744">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="icon-192.png">
     <link rel="apple-touch-icon" href="icon-192.png">
     <title>Okul Arıza & Bakım Takip</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- React & ReactDOM -->
@@ -34,6 +37,82 @@
            kalmaması için güvenli alan boşluğu. */
         .safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem); }
         .safe-bottom-fab { bottom: calc(env(safe-area-inset-bottom, 0px) + 1.5rem); }
+
+        /* ==========================================================
+           KURUMSAL TASARIM KATMANI — yalnızca görünüm. İşlevlere dokunmaz.
+           Palet: lacivert #0f2744 · çelik mavisi #1e40af · altın vurgu #c9a227
+                  zemin #eef1f5 · çizgi #d5dbe4 · metin #1f2937
+        ========================================================== */
+        :root { --lacivert:#0f2744; --mavi:#1e40af; --altin:#c9a227; --zemin:#eef1f5; --cizgi:#d5dbe4; }
+        body, body .font-sans, body input, body select, body textarea, body button {
+            font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        body, body > #root > div { background: var(--zemin); color: #1f2937; }
+        body :focus-visible { outline: 2px solid var(--mavi); outline-offset: 2px; }
+
+        /* Köşe ve gölge dili: daha dik, daha sakin */
+        body .rounded-3xl, body [class*="rounded-2xl"] { border-radius: 10px; }
+        body .rounded-xl { border-radius: 8px; }
+        body .shadow-sm, body .shadow-md, body .shadow-lg { box-shadow: 0 1px 2px rgba(15,39,68,.08); }
+        body .uppercase { text-transform: none; }
+        body .tracking-wider, body .tracking-wide { letter-spacing: 0; }
+
+        /* Üst başlık: lacivert şerit + altın alt çizgi */
+        body header {
+            background: var(--lacivert); color: #fff; border: 0; border-bottom: 3px solid var(--altin);
+            border-radius: 10px; box-shadow: 0 2px 6px rgba(15,39,68,.18);
+        }
+        body header h1 { color: #fff; font-weight: 600; letter-spacing: .01em; }
+        body header p { color: #a9bbd3; }
+        body header img { background: #fff; border-radius: 9999px; padding: 2px; box-shadow: none; }
+        body header .bg-blue-600 { background: rgba(255,255,255,.12); }
+        body header button.rounded-full { border-radius: 8px; box-shadow: none; }
+        body header .bg-slate-50 { background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.22); color: #dbe6f5; }
+        body header .bg-slate-50:hover { background: rgba(255,255,255,.18); }
+        body header .bg-white { background: #fff; color: var(--lacivert); border-color: #fff; font-weight: 600; }
+        body header .bg-slate-800 { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.35); color: #fff; }
+        body header .bg-emerald-600 { background: #0f766e; border-color: #0f766e; }
+
+        /* Paneller */
+        body main .bg-white.border, body main .bg-white.rounded-t-3xl { border-color: var(--cizgi); }
+        body main h2 { color: var(--lacivert); font-weight: 600; }
+        body main label.text-slate-500, body main label.text-slate-600 { color: #475569; font-weight: 600; }
+
+        /* Form alanları */
+        body input:not([type=checkbox]):not([type=radio]), body select, body textarea {
+            background: #fff; border: 1px solid #c3ccd8; border-radius: 8px; color: #1f2937;
+        }
+        body input:focus, body select:focus, body textarea:focus {
+            border-color: var(--mavi) !important; box-shadow: 0 0 0 3px rgba(30,64,175,.15) !important; outline: none;
+        }
+        body label.border-dashed { background: #f8fafc; border: 1.5px dashed #b4bfce; border-radius: 8px; }
+        body label.border-dashed:hover { background: #eef3fb; border-color: var(--mavi); }
+
+        /* Birincil renkler: parlak mavi yerine kurumsal lacivert/çelik mavisi */
+        body .bg-blue-600 { background-color: var(--mavi); }
+        body .hover\:bg-blue-700:hover { background-color: var(--lacivert); }
+        body .text-blue-600, body .text-blue-700 { color: var(--mavi); }
+        body .border-blue-600 { border-color: var(--mavi); }
+        body button[type=submit].bg-slate-800, body button[type=submit].bg-blue-600 { background: var(--lacivert); }
+        body button[type=submit].bg-slate-800:hover, body button[type=submit].bg-blue-600:hover { background: var(--mavi); }
+
+        /* Sekmeler ve süzgeç düğmeleri */
+        body main button.rounded-full.whitespace-nowrap { border-radius: 6px; }
+
+        /* Kayıt kartları: sol kenarda durum şeridi */
+        body .group.relative.rounded-xl { border: 1px solid var(--cizgi); border-left: 4px solid #94a3b8; background: #fff; box-shadow: none; }
+        body .group.relative.rounded-xl:hover { box-shadow: 0 2px 8px rgba(15,39,68,.10); }
+        body .group.relative.rounded-xl:has(.bg-red-500) { border-left-color: #b91c1c; background: #fffafa; }
+        body .group.relative.rounded-xl:has(.bg-amber-500) { border-left-color: #b45309; }
+        body .group.relative.rounded-xl:has(.bg-emerald-500) { border-left-color: #047857; }
+        body .group .bg-red-500 { background: #b91c1c; border-radius: 4px; }
+        body .group .bg-amber-500 { background: #b45309; border-radius: 4px; }
+        body .group .bg-emerald-500 { background: #047857; border-radius: 4px; }
+        body .group .bg-slate-100.border { background: #eef2f7; border-radius: 4px; color: var(--lacivert); font-weight: 600; }
+
+        /* Boş durum ve rapor kutusu */
+        body .border-dashed.border-slate-200.rounded-2xl { background: #f8fafc; border-color: #c3ccd8; }
+        body .shadow-inner { box-shadow: none; }
     </style>
 </head>
 <body class="bg-slate-100">
