@@ -113,6 +113,25 @@
         /* Boş durum ve rapor kutusu */
         body .border-dashed.border-slate-200.rounded-2xl { background: #f8fafc; border-color: #c3ccd8; }
         body .shadow-inner { box-shadow: none; }
+
+        /* Süzgeç düğmeleri: geniş ekranda tek satır, telefonda 4 eşit sütun */
+        body .fc { display: inline-flex; align-items: center; gap: 6px; }
+        body .fc-n { font-weight: 700; }
+        @media (max-width: 639px) {
+            body .filtre-satir { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; overflow: visible; padding-bottom: 12px; }
+            body .fc { flex-direction: column-reverse; justify-content: center; gap: 1px; padding: 7px 2px; border-radius: 8px; line-height: 1.15; }
+            body .fc-n { font-size: 17px; }
+            body .fc-l { font-size: 11px; font-weight: 600; }
+
+            /* Üst başlık: logo + okul adı solda, eşit boyutlu düğmeler sağda */
+            body header { padding: 10px 12px; margin-bottom: 8px; gap: 8px; }
+            body header > div:first-child { min-width: 0; gap: 10px; }
+            body header img, body header > div:first-child > div.bg-blue-600 { width: 42px; height: 42px; max-width: 42px; flex: none; }
+            body header h1 { font-size: 15px; line-height: 1.2; white-space: normal; overflow: visible; text-overflow: clip; }
+            body header p { font-size: 10.5px; line-height: 1.25; white-space: normal; overflow: visible; margin-top: 2px; }
+            body header > div:last-child { gap: 6px; }
+            body header > div:last-child button { width: 38px; height: 38px; padding: 0; justify-content: center; }
+        }
     </style>
 </head>
 <body class="bg-slate-100">
@@ -948,11 +967,11 @@
 
                                     {activeTab === 'list' ? (
                                         <div className="space-y-5">
-                                            <div className="flex overflow-x-auto gap-2 pb-2 border-b border-slate-50">
-                                                <button onClick={() => setListFilter('Tümü')} className={`px-4 py-1.5 rounded-full text-xs font-bold border whitespace-nowrap transition-all ${listFilter === 'Tümü' ? 'bg-slate-800 text-white border-slate-800 shadow-sm' : 'bg-white text-slate-500 border-slate-200'}`}>Tümü ({recordCounts.all})</button>
-                                                <button onClick={() => setListFilter('Yeni Talep')} className={`px-4 py-1.5 rounded-full text-xs font-bold border whitespace-nowrap transition-all ${listFilter === 'Yeni Talep' ? 'bg-red-500 text-white border-red-500 shadow-md shadow-red-200' : 'bg-red-50 text-red-600 border-red-100 hover:bg-red-100'}`}>🚨 Yeni ({recordCounts.newReq})</button>
-                                                <button onClick={() => setListFilter('Parça Bekliyor')} className={`px-4 py-1.5 rounded-full text-xs font-bold border whitespace-nowrap transition-all ${listFilter === 'Parça Bekliyor' ? 'bg-amber-500 text-white border-amber-500 shadow-md shadow-amber-200' : 'bg-amber-50 text-amber-600 border-amber-100 hover:bg-amber-100'}`}>⏳ Bekleyen ({recordCounts.pending})</button>
-                                                <button onClick={() => setListFilter('Çözüldü')} className={`px-4 py-1.5 rounded-full text-xs font-bold border whitespace-nowrap transition-all ${listFilter === 'Çözüldü' ? 'bg-emerald-500 text-white border-emerald-500 shadow-md shadow-emerald-200' : 'bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-100'}`}>✅ Çözülenler ({recordCounts.resolved})</button>
+                                            <div className="filtre-satir flex overflow-x-auto gap-2 pb-2 border-b border-slate-50">
+                                                <button onClick={() => setListFilter('Tümü')} className={`px-4 py-1.5 rounded-full text-xs font-bold border fc whitespace-nowrap transition-all ${listFilter === 'Tümü' ? 'bg-slate-800 text-white border-slate-800 shadow-sm' : 'bg-white text-slate-500 border-slate-200'}`}><span className="fc-l">Tümü</span><span className="fc-n">{recordCounts.all}</span></button>
+                                                <button onClick={() => setListFilter('Yeni Talep')} className={`px-4 py-1.5 rounded-full text-xs font-bold border fc whitespace-nowrap transition-all ${listFilter === 'Yeni Talep' ? 'bg-red-500 text-white border-red-500 shadow-md shadow-red-200' : 'bg-red-50 text-red-600 border-red-100 hover:bg-red-100'}`}><span className="fc-l">Yeni</span><span className="fc-n">{recordCounts.newReq}</span></button>
+                                                <button onClick={() => setListFilter('Parça Bekliyor')} className={`px-4 py-1.5 rounded-full text-xs font-bold border fc whitespace-nowrap transition-all ${listFilter === 'Parça Bekliyor' ? 'bg-amber-500 text-white border-amber-500 shadow-md shadow-amber-200' : 'bg-amber-50 text-amber-600 border-amber-100 hover:bg-amber-100'}`}><span className="fc-l">Bekleyen</span><span className="fc-n">{recordCounts.pending}</span></button>
+                                                <button onClick={() => setListFilter('Çözüldü')} className={`px-4 py-1.5 rounded-full text-xs font-bold border fc whitespace-nowrap transition-all ${listFilter === 'Çözüldü' ? 'bg-emerald-500 text-white border-emerald-500 shadow-md shadow-emerald-200' : 'bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-100'}`}><span className="fc-l">Çözülenler</span><span className="fc-n">{recordCounts.resolved}</span></button>
                                             </div>
                                             <div className="relative">
                                                 <Icon name="search" size={18} className="absolute left-3 top-3 text-slate-400" />
